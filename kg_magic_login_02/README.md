@@ -139,6 +139,27 @@ The plugin automatically shows a download button when:
 
 The download button replaces the login form and opens the PDF in a new tab.
 
+### Using a different post as the report context (`?ref=`)
+
+If the magic login form is on a **generic login page** (no `report_pdf` custom field), you can pass the **post ID** of the report page in the URL. The plugin will use that post for the rest of the flow: `report_pdf` meta for redirect when profile is complete, and post title for the `report` query param when redirecting to the profile completion page.
+
+**Usage:** Add `?ref=<post_id>` to the login page URL. The post must exist (published or draft). If `ref` is missing or invalid, the current page (where the form is shown) is used. The parameter is named `ref` (not `pid`) to avoid conflicts with WordPress or other plugins that might strip it.
+
+**Example:** From a report listing, link to the login page with a specific report's post ID:
+
+```
+https://yoursite.com/login/?ref=42
+```
+
+Or from a template:
+
+```php
+<a href="<?php echo esc_url( add_query_arg( 'ref', get_the_ID(), home_url( '/login/' ) ) ); ?>">Get this report</a>
+```
+
+The plugin will use that post's `report_pdf` (and title for the `report` param) for the magic link flow.
+
+
 ## Email Template
 
 The magic link email uses this format:
@@ -302,8 +323,8 @@ The plugin includes scoped CSS. You can override styles in your theme:
 - Requires: Valid nonce verification
 
 ### Redirect Priority
-1. If user has incomplete profile → `redirect_incomplete`
-2. If user has complete profile AND post has `report_pdf` → PDF URL
+1. If user has incomplete profile → `redirect_incomplete` (with `report` = post title from `ref` if set)
+2. If user has complete profile AND post (`ref`) has `report_pdf` meta → that PDF URL
 3. If user has complete profile → `redirect_complete`
 4. Fallback → `redirect` parameter
 
@@ -321,6 +342,9 @@ The plugin includes scoped CSS. You can override styles in your theme:
 For issues, questions, or contributions, please contact KEEP GOING Solutions.
 
 ## Changelog
+
+### 1.0.1
+- **Report context via `?ref=`:** Support `?ref=<post_id>` on the login page. When set, that post is used as the report context (its `report_pdf` and title drive redirects). When not set, the current page is used. Uses `ref` as the URL parameter name to avoid conflicts with WordPress or other plugins.
 
 ### 1.0.0
 - Initial release

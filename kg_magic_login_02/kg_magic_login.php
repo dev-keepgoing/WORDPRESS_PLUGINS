@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KG Magic Login
  * Description: Passwordless email-based magic link login with profile completion check.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: KEEP GOING Solutions
  */
 
@@ -65,7 +65,9 @@ function kg_magic_login_form_shortcode($atts = []) {
 
     // Get current post ID and metadata (available anywhere in this function)
     $current_post_id = get_queried_object_id();
-    $report_pdf = get_post_meta($current_post_id, 'report_pdf', true);
+    // If the URL contains ?refpid=<post_id>, use that as the effective post ID
+    $effective_post_id = isset($_GET['refpid']) ? absint($_GET['refpid']) : $current_post_id;
+    $report_pdf = get_post_meta($effective_post_id, 'report_pdf', true);
     
     // Check if user is logged in and has complete metadata
     $show_download_button = false;
@@ -113,7 +115,7 @@ function kg_magic_login_form_shortcode($atts = []) {
                     'pid'      => $refer_post,
                 ], home_url('/'));
 
-                $subject = 'Your Keep Going login link';
+                $subject = 'Your ABEXUS Analytics login link';
                 $message = "Click below to sign in:\n\n{$url}\n\nThis link expires in 15 minutes.";
                 $sent    = wp_mail($email, $subject, $message);
 
@@ -190,7 +192,7 @@ function kg_magic_login_form_shortcode($atts = []) {
           <input type="hidden" name="kg_redirect" value="<?php echo esc_attr($atts['redirect']); ?>">
           <input type="hidden" name="kg_redirect_complete" value="<?php echo esc_attr($atts['redirect_complete']); ?>">
           <input type="hidden" name="kg_redirect_incomplete" value="<?php echo esc_attr($atts['redirect_incomplete']); ?>">
-          <input type="hidden" name="kg_post_id" value="<?php echo (int) get_queried_object_id(); ?>">
+          <input type="hidden" name="kg_post_id" value="<?php echo (int) $effective_post_id; ?>">
           <div class="kg-actions">
             <button type="submit" class="kg-btn">SUBMIT</button>
           </div>
@@ -321,7 +323,7 @@ function kg_ajax_request_magic_link() {
             'pid'      => $refer_post,
         ], home_url('/'));
 
-        $subject = 'Your Keep Going login link';
+        $subject = 'Your ABEXUS Analytics link';
         $message = "Click below to sign in:\n\n{$url}\n\nThis link expires in 15 minutes.";
         $sent    = wp_mail($email, $subject, $message);
 

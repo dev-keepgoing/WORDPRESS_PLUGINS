@@ -94,6 +94,34 @@ For detailed setup instructions, see each plugin's individual README file.
 
 ---
 
+## Zipping a plugin for WordPress installation
+
+To install a plugin via **Plugins → Add New → Upload Plugin** in WordPress, the plugin must be in a **zip file** that contains a single folder (the plugin folder) with the plugin files inside.
+
+### Option 1: Use the project script (recommended)
+
+From the project root (`wp_plugins/`), run:
+
+```bash
+./create-plugin-zip.sh
+```
+
+1. The script lists all plugins in the project.
+2. Enter the number of the plugin to zip (e.g. `2` for KG Magic Login), or `5` to zip **All** plugins.
+3. Enter `0` to quit without creating a zip.
+
+Generated zips are saved in the **`install/`** folder. If a zip for that plugin already exists, it is overwritten.
+
+**Example:** After choosing option `2`, you get `install/kg_magic_login_02.zip`, which you can upload in WordPress under **Plugins → Add New → Upload Plugin**.
+
+### Option 2: Create the zip manually
+
+1. Zip the **plugin folder** (e.g. `kg_magic_login_02`), not the files inside it.
+2. The zip must contain one top-level folder; inside it should be the plugin’s `.php` file(s) and any other assets.
+3. Upload that zip in WordPress via **Plugins → Add New → Upload Plugin → Choose File → Install Now → Activate**.
+
+---
+
 ## Support
 
 For questions, issues, or feature requests, please contact KEEP GOING Solutions.
